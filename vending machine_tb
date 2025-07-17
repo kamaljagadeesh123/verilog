@@ -1,0 +1,38 @@
+module tb;
+  reg clk, rst;
+  reg [1:0] in; // 5rs - 01, 10rs - 10
+  wire out;
+  wire [1:0] change;
+  
+ vending_machine dut(clk, rst, in, out, change);
+  
+  initial begin
+    clk = 0;
+    forever #5 clk = ~clk;
+  end
+  
+    initial begin
+    clk = 0;
+    rst = 1; in = 2'b00;
+    #10 rst = 0;
+
+    // Insert 5rs
+    #10 in = 2'b01;
+    // Insert another 5rs → total 10rs → should dispense
+    #10 in = 2'b01;
+    // Insert 10rs → should wait
+    #10 in = 2'b10;
+    // Insert 5rs → now total 15rs → should dispense + return 5rs
+    #10 in = 2'b01;
+
+    #20 $finish;
+  end
+
+  initial begin
+    $monitor("Time=%0t |rst=%b| in=%b | out=%b | change=%b", $time,rst, in, out, change);
+  end
+endmodule
+    
+  
+     
+
